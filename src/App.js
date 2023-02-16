@@ -15,8 +15,7 @@ import Profile from "./pages/profile/Profile";
 function App() {
   const currentUser = true;
 
-  // component to help redirect non logged in user to LOGIN page
-
+  // redirects non logged in user to LOGIN page
   const ProtectedLayout = ({ children }) => {
     if (!currentUser) {
       return <Navigate to="/login" />;
