@@ -5,10 +5,14 @@ import {
   TextsmsOutlined,
   ShareOutlined,
 } from "@mui/icons-material";
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import Comments from "../comments/Comments";
 import "./post.scss";
 
 const Post = ({ post }) => {
+  const [commentOpen, setCommentOpen] = useState(false);
+
   //Temporary
   const liked = false;
   return (
@@ -38,7 +42,7 @@ const Post = ({ post }) => {
             {liked ? <FavoriteOutlined /> : <FavoriteBorderOutlined />}
             12 Likes
           </div>
-          <div className="item">
+          <div className="item" onClick={() => setCommentOpen(!commentOpen)}>
             <TextsmsOutlined />
             Comments
           </div>
@@ -47,6 +51,7 @@ const Post = ({ post }) => {
             Share
           </div>
         </div>
+        {commentOpen ? <Comments /> : null}
       </div>
     </div>
   );
