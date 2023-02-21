@@ -48,10 +48,12 @@
         align-items: flex-start;
 
         span {
+          width: 100%;
           font-weight: 500;
         }
 
         p {
+          align-self: self-start;
           color: themed("textColorSoft");
         }
       }
