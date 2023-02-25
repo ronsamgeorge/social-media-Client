@@ -15,16 +15,17 @@ import "./style.scss";
 import { useContext } from "react";
 import { DarkModeContext } from "./context/darkModeContext";
 import { AuthContext } from "./context/authContext";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 function App() {
   const { currentUser } = useContext(AuthContext);
 
   const { darkMode } = useContext(DarkModeContext);
-  console.log(darkMode);
+
+  const queryClient = new QueryClient();
 
   // redirects non logged in user to LOGIN page
   const ProtectedLayout = ({ children }) => {
-    console.log(currentUser);
     if (!currentUser) {
       return <Navigate to="/login" />;
     }
@@ -33,17 +34,19 @@ function App() {
 
   const Layout = () => {
     return (
-      <div className={`theme-${darkMode ? "dark" : "light"}`}>
-        <NavBar />
-        <div style={{ display: "flex" }}>
-          <LeftBar />
-          <div style={{ flex: 6 }}>
-            <Outlet />
-          </div>
+      <QueryClientProvider client={queryClient}>
+        <div className={`theme-${darkMode ? "dark" : "light"}`}>
+          <NavBar />
+          <div style={{ display: "flex" }}>
+            <LeftBar />
+            <div style={{ flex: 6 }}>
+              <Outlet />
+            </div>
 
-          <RightBar />
+            <RightBar />
+          </div>
         </div>
-      </div>
+      </QueryClientProvider>
     );
   };
 
