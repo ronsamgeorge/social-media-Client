@@ -52,7 +52,7 @@ const Post = ({ post }) => {
             Share
           </div>
         </div>
-        {commentOpen ? <Comments /> : null}
+        {commentOpen ? <Comments postId={post.id} /> : null}
       </div>
     </div>
   );
