@@ -45,6 +45,8 @@ const Share = () => {
       imgUrl = await upload();
     }
     mutation.mutate({ desc, img: imgUrl });
+    setDesc("");
+    setFile(null);
   };
   return (
     <div className="share">
@@ -56,6 +58,7 @@ const Share = () => {
               type="text"
               placeholder={`What's on your mind ${currentUser.name}?`}
               onChange={(e) => setDesc(e.target.value)}
+              value={desc}
             />
           </div>
 

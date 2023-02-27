@@ -9,6 +9,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import Comments from "../comments/Comments";
 import "./post.scss";
+import moment from "moment";
 
 const Post = ({ post }) => {
   const [commentOpen, setCommentOpen] = useState(false);
@@ -28,7 +29,7 @@ const Post = ({ post }) => {
               >
                 <span className="name">{post.name}</span>
               </Link>
-              <span className="date">1 min ago</span>
+              <span className="date">{moment(post.createdAt).fromNow()}</span>
             </div>
           </div>
           <MoreHoriz />
