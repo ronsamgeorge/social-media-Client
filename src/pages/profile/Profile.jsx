@@ -9,24 +9,32 @@ import {
   EmailOutlined,
   MoreVert,
 } from "@mui/icons-material";
+import { useQuery } from "@tanstack/react-query";
+import { useContext } from "react";
+import { useLocation } from "react-router-dom";
+import { makeRequest } from "../../axios";
 import Posts from "../../components/posts/Posts";
+import { AuthContext } from "../../context/authContext";
 
 import "./profile.scss";
 
 const Profile = () => {
+  const userId = useLocation().pathname.split("/")[2];
+  const { currentUser } = useContext(AuthContext);
+
+  const { isLoading, error, data } = useQuery(["user"], () =>
+    makeRequest.get("/users/find/" + userId).then((res) => {
+      return res.data;
+    })
+  );
+
+  console.log(typeof userId, typeof currentUser.id);
+
   return (
     <div className="profile">
       <div className="images">
-        <img
-          src="https://images.pexels.com/photos/13440765/pexels-photo-13440765.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-          alt=""
-          className="cover"
-        />
-        <img
-          src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
-          alt=""
-          className="profile"
-        />
+        <img src={data?.coverPic} alt="" className="cover" />
+        <img src={data?.profilePic} alt="" className="profile" />
       </div>
       <div className="profileContainer">
         <div className="uInfo">
@@ -48,7 +56,7 @@ const Profile = () => {
             </a>
           </div>
           <div className="center">
-            <span>Jane Doe</span>
+            <span>{data?.name}</span>
             <div className="info">
               <div className="item">
                 <Place />
@@ -60,7 +68,11 @@ const Profile = () => {
                 <span>example.dev</span>
               </div>
             </div>
-            <button>Follow</button>
+            {currentUser.id.toString() === userId ? (
+              <button>Update</button>
+            ) : (
+              <button>Follow</button>
+            )}
           </div>
           <div className="right">
             <EmailOutlined />
