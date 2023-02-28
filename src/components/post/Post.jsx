@@ -5,17 +5,30 @@ import {
   TextsmsOutlined,
   ShareOutlined,
 } from "@mui/icons-material";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import Comments from "../comments/Comments";
 import "./post.scss";
 import moment from "moment";
 
+import { useQuery } from "@tanstack/react-query";
+import { makeRequest } from "../../axios";
+import { AuthContext } from "../../context/authContext";
+
 const Post = ({ post }) => {
   const [commentOpen, setCommentOpen] = useState(false);
 
+  const { currentUser } = useContext(AuthContext);
+
+  const { isLoading, error, data } = useQuery(["likes", post.id], () =>
+    makeRequest.get("/likes?postId=" + post.id).then((res) => {
+      return res.data;
+    })
+  );
+
+  console.log(data);
   //Temporary
-  const liked = false;
+  const liked = data ? data.includes(currentUser.id) : false;
   return (
     <div className="post">
       <div className="container">
@@ -41,7 +54,7 @@ const Post = ({ post }) => {
         <div className="info">
           <div className="item">
             {liked ? <FavoriteOutlined /> : <FavoriteBorderOutlined />}
-            12 Likes
+            {data ? data.length : 0} Likes
           </div>
           <div className="item" onClick={() => setCommentOpen(!commentOpen)}>
             <TextsmsOutlined />
