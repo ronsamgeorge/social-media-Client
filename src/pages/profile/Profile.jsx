@@ -9,7 +9,7 @@ import {
   EmailOutlined,
   MoreVert,
 } from "@mui/icons-material";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useContext } from "react";
 import { useLocation } from "react-router-dom";
 import { makeRequest } from "../../axios";
@@ -28,7 +28,35 @@ const Profile = () => {
     })
   );
 
-  console.log(typeof userId, typeof currentUser.id);
+  // create react query for relationships
+  const { data: relationshipData } = useQuery(["relationship"], () =>
+    makeRequest.get("/relationships?followedUserId=" + userId).then((res) => {
+      return res.data;
+    })
+  );
+
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation(
+    (following) => {
+      if (following)
+        return makeRequest.delete("/relationships?userId=" + userId);
+
+      return makeRequest.post("/relationships", { userId });
+    },
+    {
+      onSuccess: () => {
+        // Invalidate and refetch
+        queryClient.invalidateQueries(["relationship"]);
+      },
+    }
+  );
+
+  const handleFollow = () => {
+    mutation.mutate(relationshipData.includes(currentUser.id));
+  };
+
+  console.log(relationshipData);
 
   return (
     <div className="profile">
@@ -71,7 +99,11 @@ const Profile = () => {
             {currentUser.id.toString() === userId ? (
               <button>Update</button>
             ) : (
-              <button>Follow</button>
+              <button onClick={handleFollow}>
+                {relationshipData && relationshipData.includes(currentUser.id)
+                  ? "FOllowing"
+                  : "Follow"}
+              </button>
             )}
           </div>
           <div className="right">
@@ -79,7 +111,7 @@ const Profile = () => {
             <MoreVert />
           </div>
         </div>
-        <Posts />
+        <Posts userId={userId} />
       </div>
     </div>
   );
